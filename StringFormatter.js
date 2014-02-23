@@ -76,7 +76,7 @@ var StringFormatter = (function () {
       var matchedArray = [],
           templateMatcher = new RegExp('\\${\\w+}', 'g'); //global flag is important due to how the format method uses it
       
-    if (keyValuePairString) {
+      if (keyValuePairString) {
         log('using convenience method, resetting key value pairs.');
         try {
           StringFormatter.setSubstitutionValues(keyValuePairString, true);
@@ -87,8 +87,7 @@ var StringFormatter = (function () {
       }
 
       while ((matchedArray = templateMatcher.exec(templateString)) !== null) {
-        console.log("match : " + templateMatcher.lastIndex);
-        templateMatcher.lastIndex = 0;
+        templateMatcher.lastIndex = 0; //reset to the beginning of the string - possible area for improvement
         var keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
         //found a templated var, do I have a config?
         if (!substitutionValues[keyName]) {
@@ -102,6 +101,15 @@ var StringFormatter = (function () {
       }
 
       return templateString;
+    },
+
+    parse : function (templateString, keyValuePairString) {
+      try {
+        return StringFormatter.format(templateString, keyValuePairString);
+      } catch (e) {
+        console.log(e.message);
+        return templateString;
+      }
     },
 
     /**

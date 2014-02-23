@@ -68,7 +68,7 @@
 
   <script>
     $( "#parse" ).click(function() {
-      $( "#parsedResults" ).text(StringFormatter.format($( "#stringInput" ).val(), $( "#objectMap" ).val()));
+      $( "#parsedResults" ).text(StringFormatter.parse($( "#stringInput" ).val(), $( "#objectMap" ).val()));
     });
   </script>
 
