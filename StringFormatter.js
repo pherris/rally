@@ -103,7 +103,7 @@ var StringFormatter = (function () {
           log('found key: ' + matchedArray[0] + ', replacing with: ' + substitutionValues[keyName]);
 
           //reset lastIndex to be the end of the string that replaced the last match
-          templateMatcher.lastIndex = templateMatcher.lastIndex + Math.max(matchedArray[0].length, substitutionValues[keyName].length) - Math.min(matchedArray[0].length, substitutionValues[keyName].length);
+          templateMatcher.lastIndex = templateMatcher.lastIndex + (substitutionValues[keyName].length - matchedArray[0].length);
         }
       }
 
