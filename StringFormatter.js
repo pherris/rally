@@ -30,6 +30,12 @@ var StringFormatter = (function () {
           keyValuePair = [],
           i;
 
+      //clean existing map object? - could arguably go after validation.
+      if (clean) {
+        substitutionValues = {};
+        log('reset existing map.');
+      }
+
       //possible refactoring of validation code outside of this method for reuse or convenience in validation
       //expected type is string
       if (typeof keyValuePairString !== "string") {
@@ -41,14 +47,12 @@ var StringFormatter = (function () {
         log('key value pair does not pass regex: ' + keyValuePairString);
         throw new Error('String format invalid. Be sure input string matches \"key=value,key=value\" with no spaces. Expects any alphanumeric character from the basic Latin alphabet, including the underscore.');
       }
+      //enforce an arbitrary limit - should be determined by testing and discussion
+      if (keyValuePairString.length > 10000) {
+        throw new Error('String format invalid. String is more than 10k characters.');
+      }
 
       log('key value pair passed validation');
-      
-      //clean existing map object?
-      if (clean) {
-        substitutionValues = {};
-        log('reset existing map.');
-      }
 
       //populate into object
       keyValuePairs = keyValuePairString.split(',');
@@ -88,7 +92,6 @@ var StringFormatter = (function () {
       }
 
       while ((matchedArray = templateMatcher.exec(templateString)) !== null) {
-        templateMatcher.lastIndex = 0; //reset to the beginning of the string - possible area for improvement
         var keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
         //found a templated var, do I have a config?
         if (!substitutionValues[keyName]) {
@@ -98,6 +101,9 @@ var StringFormatter = (function () {
         } else {
           templateString = templateString.replace(matchedArray[0], substitutionValues[keyName]);
           log('found key: ' + matchedArray[0] + ', replacing with: ' + substitutionValues[keyName]);
+
+          //reset lastIndex to be the end of the string that replaced the last match
+          templateMatcher.lastIndex = templateMatcher.lastIndex + Math.max(matchedArray[0].length, substitutionValues[keyName].length) - Math.min(matchedArray[0].length, substitutionValues[keyName].length);
         }
       }
 
