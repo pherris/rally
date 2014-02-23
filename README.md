@@ -25,7 +25,6 @@ It is possible to reuse, add or modify the key(s):
 
 `````
 StringFormatter.setSubstitutionValues("day=Thursday,name=Billy");
-StringFormatter.parse("${name} has an appointment on ${day}");
 StringFormatter.setSubstitutionValues("reminder=false,email=bdog@email.com");
 StringFormatter.parse("${name} has an appointment on ${day}, reminder: ${reminder} to ${email}");
 `````

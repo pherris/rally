@@ -1,10 +1,10 @@
 //TODO 
 //is this the right api for multiple apps running on the same screen?
 //dependencies on console.log and JSON.stringify
-//good candidate for unit testing
+//good candidate for unit testing for edge conditions
 
 if (StringFormatter) {
-  throw new Error ('Cannot create new StringFormatter singleton, an object already exists within that namespace. Did the library get importated more than once?');
+  throw new Error('Cannot create new StringFormatter singleton, an object already exists within that namespace. Did the library get importated more than once?');
 }
 
 var StringFormatter = (function () {
@@ -56,7 +56,7 @@ var StringFormatter = (function () {
 
       //populate into object
       keyValuePairs = keyValuePairString.split(',');
-      for (i = 0 ; i < keyValuePairs.length; i++) {
+      for (i = 0; i < keyValuePairs.length; i++) {
         keyValuePair = keyValuePairs[i].split('=');
         substitutionValues[keyValuePair[0]] = keyValuePair[1];
       }
@@ -79,24 +79,26 @@ var StringFormatter = (function () {
      **/
     format : function (templateString, keyValuePairString) {
       var matchedArray = [],
-          templateMatcher = new RegExp('\\${\\w+}', 'g'); //global flag is important due to how the format method uses it
-      
+          templateMatcher = new RegExp('\\${\\w+}', 'g'), //global flag is important due to how the format method uses it
+          keyName = '';
+
       if (keyValuePairString) {
         log('using convenience method, resetting key value pairs.');
         try {
           StringFormatter.setSubstitutionValues(keyValuePairString, true);
         } catch (e) {
-          log('failed to set new key/values, defaulting to existing values.')
+          log('failed to set new key/values, defaulting to existing values.');
           console.log(e.message);
         }
       }
 
       while ((matchedArray = templateMatcher.exec(templateString)) !== null) {
-        var keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
+        keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
+
         //found a templated var, do I have a config?
         if (!substitutionValues[keyName]) {
           log('found a template key that had no mapped value. This is not allowed per the requirements (although, I\'d rather not throw a fatal error like this because the developer has to catch it.).');
-          throw new Error('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'' );
+          throw new Error('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'');
           //console.log('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'');
         } else {
           templateString = templateString.replace(matchedArray[0], substitutionValues[keyName]);
@@ -110,6 +112,9 @@ var StringFormatter = (function () {
       return templateString;
     },
 
+    /**
+     * user friendly method that catches exceptions and returns the original string to the developer unformatted.
+     **/
     parse : function (templateString, keyValuePairString) {
       try {
         return StringFormatter.format(templateString, keyValuePairString);
@@ -125,5 +130,5 @@ var StringFormatter = (function () {
     setDebug : function (isDebug) {
       debug = isDebug;
     }
-  }
+  };
 })();
