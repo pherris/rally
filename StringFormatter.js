@@ -1,7 +1,8 @@
-//TODO keys can have no spaces, but right no values cannot either.
+//TODO 
 //is this the right api for multiple apps running on the same screen?
 //dependencies on console.log and JSON.stringify
-//currently not ideal developer experience if there is a poorly formatted string
+//good candidate for unit testing
+
 if (StringFormatter) {
   throw new Error ('Cannot create new StringFormatter singleton, an object already exists within that namespace. Did the library get importated more than once?');
 }
