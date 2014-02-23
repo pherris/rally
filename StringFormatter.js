@@ -10,8 +10,13 @@ var StringFormatter = (function () {
       templateMatcher = new RegExp('\\${\\w+}', 'g'), //global flag is important due to how the format method uses it
       substitutionValues = {},  //object for easy lookup
       // template = '',
-      debug = false;
-  
+      debug = false,
+      log = function (statement) {
+        if (debug) {
+          console.log(statement);
+        }
+      };
+
   return {
     /**
      * keyValuePairString string of key value pairs key=value,key=value
@@ -25,16 +30,21 @@ var StringFormatter = (function () {
       //possible refactoring of validation code outside of this method for reuse or convenience in validation
       //expected type is string
       if (typeof keyValuePairString !== "string") {
+        log('type of key value pair is not string: ' + keyValuePairString);
         throw { message: "Format of input expected to be string in StringFormatter.setSubstitutionValues()." };
       }
       //expected format is key=value,key=value (not tolerant of spaces - yet ;)
       if (!formatValidator.exec(keyValuePairString)) {
+        log('key value pair does not pass regex: ' + keyValuePairString);
         throw { message: "String format invalid. Be sure input string matches \"key=value,key=value\" with no spaces. Expects any alphanumeric character from the basic Latin alphabet, including the underscore." };
       }
+
+      log('key value pair passed validation');
       
       //clean existing map object?
       if (clean) {
         substitutionValues = {};
+        log('reset existing map.');
       }
 
       //populate into object
@@ -44,6 +54,8 @@ var StringFormatter = (function () {
         substitutionValues[keyValuePair[0]] = keyValuePair[1];
       }
 
+      log('loaded new map with ' +  i + ' values.');
+
       return true;
     },
 
@@ -51,6 +63,7 @@ var StringFormatter = (function () {
      * gets the current value of the substitution values object
      **/
     getSubstitutionValues : function () {
+      log('returning substitution values.');
       return substitutionValues;
     },
 
@@ -81,6 +94,7 @@ var StringFormatter = (function () {
       // }
       
       if (keyValuePairString) {
+        log('using convenience method, resetting key value pairs.');
         StringFormatter.setSubstitutionValues(keyValuePairString, true);
       }
 
@@ -88,12 +102,14 @@ var StringFormatter = (function () {
         var keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
         //found a templated var, do I have a config?
         if (!substitutionValues[keyName]) {
+          log('found a template key that had no mapped value. This is not allowed per the requirements (although, I\'d rather not throw a fatal error like this).');
           throw { message: 'Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'' };
         }
-        var msg = "Found " + matchedArray[0] + ".  ";
-        msg += "Next match starts at " + templateMatcher.lastIndex;
-        console.log(msg);
+        
+        templateString = templateString.replace(matchedArray[0], substitutionValues[keyName]);
       }
+
+      return templateString;
     },
 
     /**
