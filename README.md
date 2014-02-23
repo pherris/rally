@@ -51,8 +51,10 @@ StringFormatter.parse("${name} has an appointment on ${day}, reminder: ${reminde
 
 MDN: 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+
 Bootstrap: 
 http://getbootstrap.com/examples/theme/
+
 Regexpal: 
 http://regexpal.com/
 
