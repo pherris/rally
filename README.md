@@ -49,13 +49,19 @@ StringFormatter.parse("${name} has an appointment on ${day}, reminder: ${reminde
 
 ## Credits
 
-MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
-Bootstrap: http://getbootstrap.com/examples/theme/
-Regexpal: http://regexpal.com/
+MDN: 
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+Bootstrap: 
+http://getbootstrap.com/examples/theme/
+Regexpal: 
+http://regexpal.com/
 
 ### Dependencies
 
 console.log (StringFormatter)
+
 JSON.stringify (StringFormatter)
+
 jQuery (UI only)
+
 Bootstrap (UI only)
