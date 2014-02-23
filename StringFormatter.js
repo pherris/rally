@@ -1,6 +1,7 @@
 //TODO keys can have no spaces, but right no values cannot either.
 //is this the right api for multiple apps running on the same screen?
 //dependencies on console.log and JSON.stringify
+//currently not ideal developer experience if there is a poorly formatted string
 if (StringFormatter) {
   throw new Error ('Cannot create new StringFormatter singleton, an object already exists within that namespace. Did the library get importated more than once?');
 }
@@ -8,7 +9,7 @@ if (StringFormatter) {
 var StringFormatter = (function () {
   'use strict';
   //this object takes a map of key/value pairs to be used in string formatting, then reuses that map for subsequent requests to the format engine.
-  var formatValidator = new RegExp('^([\\w]+=[\\w]+,)?([\\w]+=[\\w]+){1}$'), //regex for map input validation
+  var formatValidator = new RegExp('^([\\w]+=.+,)?([\\w]+=.+){1}$'), //regex for map input validation
       substitutionValues = {},  //object for easy lookup
       // template = '',
       debug = false,
@@ -72,15 +73,10 @@ var StringFormatter = (function () {
      * format takes optional parameters templateString and keyValuePairString for convenience.
      **/
     format : function (templateString, keyValuePairString) {
-      var formattedString = '',
-          matchedArray = [],
+      var matchedArray = [],
           templateMatcher = new RegExp('\\${\\w+}', 'g'); //global flag is important due to how the format method uses it
       
-      // if (templateString) {
-      //   StringFormatter.setTemplate(templateString);
-      // }
-      
-      if (keyValuePairString) {
+    if (keyValuePairString) {
         log('using convenience method, resetting key value pairs.');
         try {
           StringFormatter.setSubstitutionValues(keyValuePairString, true);
@@ -90,17 +86,18 @@ var StringFormatter = (function () {
         }
       }
 
-      log('start matching');
       while ((matchedArray = templateMatcher.exec(templateString)) !== null) {
+        console.log("match : " + templateMatcher.lastIndex);
+        templateMatcher.lastIndex = 0;
         var keyName = matchedArray[0].substring(2, matchedArray[0].length - 1);
         //found a templated var, do I have a config?
         if (!substitutionValues[keyName]) {
-          log('found a template key that had no mapped value. This is not allowed per the requirements (although, I\'d rather not throw a fatal error like this).');
-          //throw new Error('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'' );
-          console.log('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'');
+          log('found a template key that had no mapped value. This is not allowed per the requirements (although, I\'d rather not throw a fatal error like this because the developer has to catch it.).');
+          throw new Error('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'' );
+          //console.log('Found template key \'' + keyName + '\' with no value in template string: \'' + templateString + '\' with mapped values: \'' + JSON.stringify(substitutionValues) + '\'');
         } else {
-          log('found key: ' + matchedArray[0] + ', replacing with: ' + substitutionValues[keyName]);
           templateString = templateString.replace(matchedArray[0], substitutionValues[keyName]);
+          log('found key: ' + matchedArray[0] + ', replacing with: ' + substitutionValues[keyName]);
         }
       }
 
