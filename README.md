@@ -1,6 +1,8 @@
 # String Template Engine
 
-A string templating engine for JavaScript. Allows the user to set a list of key/value pairs that are used to format strings.
+A string templating engine for JavaScript. Allows the user to set a list of key/value pairs that are used to format strings. 
+
+To see in action, clone this repository and open the index file in your browser.
 
 ## Usage
 Simple usage - the most user friendly:
@@ -40,7 +42,7 @@ http://getbootstrap.com/examples/theme/
 Regexpal: 
 http://regexpal.com/
 
-### Dependencies
+## Dependencies
 
 console.log (StringFormatter)
 
