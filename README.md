@@ -15,12 +15,6 @@ Less user firendly... You must catch the possible exception thrown if your templ
 StringFormatter.format("${name} has an appointment on ${day}", "day=Thursday,name=Billy");
 `````
 
-To see debug:
-
-`````
-StringFormatter.setDebug(true);
-`````
-
 It is possible to reuse, add or modify the key(s):
 
 `````
